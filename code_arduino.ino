@@ -12,91 +12,93 @@ int speede = 0;
 int compare = 0;
 int dValue = 0;
 int pirValue;
-
 int actionMotor = 0;
 int instructionRasp = -1;
 
 void setup()
 {
 Serial.begin(9600);
-Serial.println("START!");
 pinMode(M1, OUTPUT);
 pinMode(M2, OUTPUT); 
-Serial.print("essai de capteur IR");
 pinMode(pingauche,INPUT);  //Capteur IR sur pin-11 numérique
 pinMode(pindroite,INPUT);
 pinMode(pinmillieu,INPUT);
-
 pinMode(digitalSonPin,INPUT);  // le son 
-
 pinMode(pirPin, INPUT); // detecteur de mouvement
 }
 void loop()
 {
-
-  instructionRasp = Serial.read();
-
+    int gauche = digitalRead(pingauche); 
+    int millieu = digitalRead(pinmillieu);
+    int droite = digitalRead(pindroite);
+    instructionRasp = Serial.read();
   
-  Serial.print("instructionRasp : ");
-  Serial.println(instructionRasp);
+  if(millieu == 0 ){
+
+    stopMotor();
+    delay(1000);
+    goBackward(100);
+    delay(1000);
+        stopMotor();
+  }else if(gauche == 0 ){
+
+    stopMotor();
+    delay(1000);
+    goBackward(100);
+    delay(1000);
+        stopMotor();
+
+  }else if(droite == 0 ){
+
+    stopMotor();
+    delay(1000);
+    goBackward(100);
+    delay(1000);
+    stopMotor();
+
+
+  }else{
 
 if(instructionRasp == 53){
   startMotor(200);  
-  
+  delay(1000);
   instructionRasp = 0;
 }
 if(instructionRasp == 54){
-stopMotor();
+  stopMotor();
+  delay(1000);
 
 instructionRasp = 0;
 }
 if(instructionRasp == 55){
 goBackward(200);
-delay(3000);
+delay(1000);
   instructionRasp = 0;
 }
 
 if(instructionRasp == 56){
 turnRight();
-delay(3000);
+delay(1000);
 instructionRasp = 0;
   
 }
 if(instructionRasp == 57){
  turnLeft();
- delay(3000);
+ delay(1000);
  instructionRasp = 0;
 }
-
-
-  delay(1000);
-  // recuperation des valeur des capteurs IR // pour les mures
-    int gauche = digitalRead(pingauche); 
-    int millieu = digitalRead(pinmillieu);
-    int droite = digitalRead(pindroite);
-// ici faire un test de le faire reculer si les capteur detect qqchose
-
+  }
 
 // partie du son ----------------------------------
 
 dValue = digitalRead(digitalSonPin);
-Serial.print("valeur du son : ");
 Serial.println(dValue);
 
 // partie detection de mouvement 
 
- pirValue = digitalRead(pirPin);
- Serial.print("valeur de mouvement : ");
+pirValue = digitalRead(pirPin);
 Serial.println(pirValue);
 
-if(pirValue == 1){
-   // Serial.send(783);
-}
-if(dValue == 1){
-   // Serial.send(783);
-}
-
-    */
 }
 
 void test(int speede){
@@ -111,19 +113,15 @@ void test(int speede){
 
 
  void startMotor(int speede){
- delay(100);
  digitalWrite(M1,LOW);
  digitalWrite(M2,HIGH);
  analogWrite(E1, speede); //PWM Speed Control
  analogWrite(E2, speede); //PWM Speed Control
-  delay(3000);
  }
 
  void stopMotor(){
  delay(100);
-  Serial.write("test ,ca stoppe : ");
-  Serial.write(123);
- Serial.println("ca stoppe ");
+ Serial.write(123);
  digitalWrite(M1,LOW);
  digitalWrite(M2,HIGH);
  analogWrite(E1, 0); //PWM Speed Control
@@ -137,25 +135,22 @@ void goBackward(int speede){
  digitalWrite(M2,LOW);
  analogWrite(E1, speede); //PWM Speed Control
  analogWrite(E2, speede); //PWM Speed Control
-  delay(3000);
  }
 
-void turnRight(){
+void turnLeft(){
  delay(100);
  digitalWrite(M1,HIGH);
  digitalWrite(M2,HIGH);
- analogWrite(E1, 150); //PWM Speed Control
- analogWrite(E2, 150); //PWM Speed Control
-  delay(100);
+ analogWrite(E1, 00); //PWM Speed Control
+ analogWrite(E2, 100); //PWM Speed Control
   
 }
-void turnLeft(){
+void turnRight(){
  delay(100);
  digitalWrite(M1,LOW);
  digitalWrite(M2,LOW);
- analogWrite(E1, 150); //PWM Speed Control
- analogWrite(E2, 150); //PWM Speed Control
-  delay(100);
+ analogWrite(E1, 100); //PWM Speed Control
+ analogWrite(E2, 00); //PWM Speed Control
 }
 
 void turnRandom(){
@@ -165,6 +160,5 @@ int leNBrandom = random(100,240);
  digitalWrite(M2,HIGH);
  analogWrite(E1, leNBrandom); //PWM Speed Control
  analogWrite(E2, leNBrandom); //PWM Speed Control
- delay(1000);
   
 }
